@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+
+/*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});*/
+
+
+// Route definitions should be done in the v1.php file in the routes folder
+Route::prefix('v1')->group( function(){
+        require_once "v1.php";
 });
