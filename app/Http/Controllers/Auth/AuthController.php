@@ -11,14 +11,14 @@ use App\Models\User;
 
 
 
-class UserController extends Controller
+class AuthController extends Controller
 {
-    //
+    
     /**
      * Register a new user.
      *
-     * @param  $request(email, password)
-     * @return response with user object and  token for user
+     * @param  $request(email, name, password)
+     * @return response with user object and token for user
      */
 
      public function register(Request $request){
@@ -29,12 +29,13 @@ class UserController extends Controller
 
             $request->validate([
                 'email' => 'required|email|unique:users',
-                'name' => 'required',
+                'firstname' => 'required',
+                'lastname' => 'required',
                 'password' => 'required'
             ]);
    
             $user = User::create([
-                'name' => $request->name,
+                'name' => $request->firstname.' '.$request->lastname,
                 'email' => $request->email,
                 'password' => Hash::make($request->password)
             ]);
