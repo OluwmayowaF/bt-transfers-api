@@ -22,18 +22,20 @@ class AuthController extends Controller
      */
 
      public function register(Request $request){
+        $request->validate([
+            'email' => 'required|email|unique:users',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'password' => 'required'
+        ]);
+
 
         DB::beginTransaction();
 
+
         try {
 
-            $request->validate([
-                'email' => 'required|email|unique:users',
-                'firstname' => 'required',
-                'lastname' => 'required',
-                'password' => 'required'
-            ]);
-   
+            
             $user = User::create([
                 'name' => $request->firstname.' '.$request->lastname,
                 'email' => $request->email,
@@ -58,12 +60,13 @@ class AuthController extends Controller
      }
 
      public function login(Request $request){
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
 
         try{
-            $request->validate([
-                'email' => 'required|email',
-                'password' => 'required'
-            ]);
+            
     
             $user = User::where('email', $request->email)->first();
     
