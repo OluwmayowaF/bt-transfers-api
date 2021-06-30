@@ -30,7 +30,7 @@
                    <br/>
                 </div>
                 <div>
-                <h2 class="text-gray-500"><a href="https://documenter.getpostman.com/view/9048286/TzkyNLRr">LINK TO API DOCUMENTATION</a></h2>
+                <h2 class="text-gray-500"><a href="https://documenter.getpostman.com/view/9048286/TzkyNLRr">CLICK HERE FOR API DOCUMENTATION</a></h2>
                 </div>
                
                 </div>

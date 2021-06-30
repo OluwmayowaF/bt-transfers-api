@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Mail;
 
 class TransferController extends Controller
 {
+    /**
+     * This Method accepts users paymennt and creates transfer record,
+     * Transfer is made when response is recieved from flutter webhook
+     */
     public function initiateTransfer(Request $request)
     {
         try {
@@ -23,6 +27,7 @@ class TransferController extends Controller
                 'amount' => 'required'
             ]);
 
+            // Get the bank code from the submitted bank name
             $recipient_bank_code = Flutterwave::findBankCode($request->recipient_bank);
             $user_bank_code = Flutterwave::findBankCode($request->user_bank);
 
@@ -73,7 +78,7 @@ class TransferController extends Controller
 
             $details = [
                 'user' => Auth::user(),
-                'info' => 'Your transfer to ' . $transfer->recipient_name . ' will be initiated once your payment of ' . $transfer->amount . ' is verified'
+                'info' => 'Your transfer to ' . $transfer->recipient_name . ' will be initiated once your payment of ' . $transfer->amount . ' Naira is verified'
             ];
 
             Mail::to(Auth::user()->email)->send(new NotificationMails($details));
@@ -84,7 +89,7 @@ class TransferController extends Controller
                 'status' =>  true,
                 'message' => 'Payment successful you will recieve a mail when confirmed and transfer is initiated, keep this reference (' . $payment['data']['flw_ref'] . ') as proof if payment is not recieved',
             ], 200);
-            
+
         } catch (\Throwable $err) {
             return response()->json([
                 'message' => 'Unable to process request, kindly check your internet connection and try again',
@@ -93,6 +98,7 @@ class TransferController extends Controller
             ], 500);
         }
     }
+    
 
     public function validatePayment(Request $request)
     {

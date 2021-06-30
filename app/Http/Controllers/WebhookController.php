@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Mail;
 
 class WebhookController extends Controller
 {
-    //
+    /*The Method manages request gotten from the flutterwave payment/ tramsaction webhook*/
     public function managePayments(Request $request){
 
         if($request->event == "charge.completed" && $request->data['status'] == 'successful' ){
@@ -54,6 +54,8 @@ class WebhookController extends Controller
 
 
     }
+    
+    /*The Method manages request gotten from the flutterwave transfer webhook*/
 
     public function manageTransfers(Request $request){
         if($request->event == "transfer.completed"){
