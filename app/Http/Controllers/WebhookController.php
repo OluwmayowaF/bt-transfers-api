@@ -8,8 +8,6 @@ use App\Models\User;
 use App\Support\Flutterwave;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class WebhookController extends Controller
@@ -27,6 +25,13 @@ class WebhookController extends Controller
 
            $flutter_transfer = Flutterwave::initiateTransfer('stuff', $transfer->amount,  $recipient_bank['code'], $transfer->recipient_acc_num, $reference); 
            if( !$flutter_transfer){
+            $details = [
+                'user' =>  'Admin',
+                'info' => 'A transfer attempt just failed for transfer with id'. $transfer->id. 'and flutterwave reference'. $request->data['flw_ref']
+            ];
+    
+            Mail::to('admin@bt.com')->send(new NotificationMails($details));
+
                    return response()->json([
                 'status' =>  false,
             ], 400);

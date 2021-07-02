@@ -17,7 +17,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::prefix('/transfers')->group(function(){
         Route::post('/', [TransferController::class, 'initiateTransfer']);
         Route::get('/', [TransferController::class, 'transferHistory']);
-        Route::post('/validatepayment', [TransferController::class, 'validatePayment']);
+       // Route::post('/validatepayment', [TransferController::class, 'validatePayment']);
     });
 });
 

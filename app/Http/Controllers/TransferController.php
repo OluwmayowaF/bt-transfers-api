@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\CreateTransfer;
 use App\Mail\NotificationMails;
-use App\Models\Transfer;
 use App\Support\Flutterwave;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
