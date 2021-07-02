@@ -26,7 +26,7 @@ class TransferController extends Controller
             if (!$user_bank_code) {
                 return response()->json([
                     'status' =>  false, 
-                    'error' => 'User bank name is invalid'
+                    'error' => 'User bank was not found, use the bank list endpoint to get banks that we support'
                 ], 400);
             } 
 
@@ -34,7 +34,7 @@ class TransferController extends Controller
             if (!$recipient_bank_code) {
                 return response()->json([
                     'status' =>  false, 
-                    'error' => 'Recipient bank name is invalid'
+                    'error' => 'Recipient bank was not found, use the bank list endpoint to get banks that we support'
                 ], 400);
 
             } 
