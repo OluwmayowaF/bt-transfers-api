@@ -16,3 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::fallback(function() {
+    return response()->json([
+        'status' => false,
+        'error' => 'Route not found',
+    ], 404);
+});

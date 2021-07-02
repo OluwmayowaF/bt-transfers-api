@@ -19,8 +19,16 @@ use Illuminate\Support\Facades\Route;
     return $request->user();
 });*/
 
+Route::get('/', function () {
+    return response()->json([
+        'status' => true,
+        'message' => 'Welcome to BT transfers API'
+    ], 200);
+});
 
 // Route definitions should be done in the v1.php file in the routes folder
 Route::prefix('v1')->group( function(){
         require_once "v1.php";
 });
+
+
