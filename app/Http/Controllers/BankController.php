@@ -12,7 +12,11 @@ class BankController extends Controller
      */
     public function getAllBanks(){
         $banks = Flutterwave::listBanks();
-        return response()->json(['banks' =>  $banks], 200);
+
+        return response()->json([
+            'status' =>  true,
+            'data' => $banks['data'],
+        ], 200);
     }
 
 }

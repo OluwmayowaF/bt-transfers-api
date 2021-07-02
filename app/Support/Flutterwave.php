@@ -48,7 +48,7 @@ class Flutterwave
     public static function verifyAccountDetails($bank_code, $account_number)
     {
         $bearer_token = 'Bearer ' . env('FLUTTERWAVE_SECRET_KEY');
-        try {
+       
             $response = Http::withHeaders([
                 'Authorization' => $bearer_token,
             ])
@@ -58,9 +58,7 @@ class Flutterwave
                 ]);
 
             return $response->json();
-        } catch (\Throwable $err) {
-            return $err;
-        }
+       
     }
 
     /**
@@ -83,6 +81,8 @@ class Flutterwave
             "currency" => "NGN",
             "fullname" => $fullname,
         ]);
+
+        
 
         return $response->json();
     }

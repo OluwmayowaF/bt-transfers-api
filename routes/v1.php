@@ -14,11 +14,10 @@ Route::prefix('/auth')->group( function(){
 
 //Protected Routes for logged in users only
 Route::middleware('auth:sanctum')->group(function(){
-    Route::prefix('/transfer')->group(function(){
+    Route::prefix('/transfers')->group(function(){
         Route::post('/', [TransferController::class, 'initiateTransfer']);
+        Route::get('/', [TransferController::class, 'transferHistory']);
         Route::post('/validatepayment', [TransferController::class, 'validatePayment']);
-        Route::get('/history', [TransferController::class, 'transferHistory']);
-        Route::get('/search', [TransferController::class, 'searchTransfer']);
     });
 });
 
