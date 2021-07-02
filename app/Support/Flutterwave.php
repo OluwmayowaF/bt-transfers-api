@@ -21,7 +21,11 @@ class Flutterwave
             'Authorization' => $bearer_token,
         ])->get('https://api.flutterwave.com/v3/banks/NG');
 
-        return $response->json();
+        if($response){
+            return $response->json();
+        }
+        return null;
+       
     }
 
     /**
@@ -57,8 +61,10 @@ class Flutterwave
                     'account_bank' => $bank_code,
                 ]);
 
-            return $response->json();
-       
+                if($response){
+                    return $response->json();
+                }
+                return null;       
     }
 
     /**
@@ -82,10 +88,10 @@ class Flutterwave
             "fullname" => $fullname,
         ]);
 
-        
-
-        return $response->json();
-    }
+        if($response){
+            return $response->json();
+        }
+        return null;    }
 
     /**
      * Validate charge
@@ -104,8 +110,10 @@ class Flutterwave
             'flw_ref' => $paymentRef,
         ]);
 
-        return $response->json();
-    }
+        if($response){
+            return $response->json();
+        }
+        return null;    }
 
 
     /**
@@ -131,7 +139,8 @@ class Flutterwave
             "debit_currency" => "NGN"
         ]);
 
-
-        return $response->json();
-    }
+        if($response){
+            return $response->json();
+        }
+        return null;    }
 }

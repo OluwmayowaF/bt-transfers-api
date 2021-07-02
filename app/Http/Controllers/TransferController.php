@@ -18,7 +18,6 @@ class TransferController extends Controller
      */
     public function initiateTransfer(CreateTransfer $request)
     {
-        try {  
 
             // Get and verify the validitity of  bank code from the submitted bank name
             $user_bank_code = Flutterwave::findBankCode($request->user_bank);
@@ -60,6 +59,14 @@ class TransferController extends Controller
 
             $payment = Flutterwave::chargeBankAcc($reference, $request->amount, $user_bank_code['code'], $request->user_acc_num, Auth::user()->name, Auth::user()->email);
 
+            // if payment fails return alert user 
+            if(!$payment){
+                return response()->json([
+                    'status' =>  false,
+                    'error' => 'We are unable to process your request at the moment please try again later'
+                ], 500);
+            }
+
             if ($payment['status'] !== 'success') {
 
                 return response()->json([
@@ -88,13 +95,6 @@ class TransferController extends Controller
                 'message' => 'Payment successful you will recieve a mail when confirmed and transfer is initiated, keep this reference (' . $payment['data']['flw_ref'] . ') as proof if payment is not recieved',
             ], 200);
 
-        } catch (\Throwable $err) {
-            return response()->json([
-                'message' => 'We are unable to process your request right now, kindly check your internet connection and try again in a few seconds',
-                'error' => $err->getMessage()
-
-            ], 500);
-        }
     }
     
     /*  Required if running flutterwave from a live account 
@@ -130,25 +130,25 @@ class TransferController extends Controller
 
     public function transferHistory(Request $request)
     {
-        try {
+       
             $user_id = Auth::user()->id;
 
             $term = $request->term;
 
             $transfers =  TransferService::userTransfers($user_id, $term);
+
+            if(!$transfers){
+                return response()->json([
+                    'status' =>  false,
+                    'error' => 'We are unable to process your request at the moment, please try again later',
+                ], 500);
+            }
         
             return response()->json([
                 'status' =>  true,
                 'data' => $transfers,
             ], 200);
 
-        } catch (\Throwable $err) {
-            return response()->json([
-                'status' => false,
-                'message' => 'We are unable to process your request right now, kindly check your internet connection and try again in a few seconds. if issue per',
-                'error' => $err->getMessage()
-
-            ], 500);
-        }
+        
     }
 }
