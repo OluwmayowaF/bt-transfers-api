@@ -20,113 +20,60 @@ class TransferController extends Controller
     {
 
             // Get and verify the validitity of  bank code from the submitted bank name
-            $user_bank_code = Flutterwave::findBankCode($request->user_bank);
-            if (!$user_bank_code) {
-                return response()->json([
-                    'status' =>  false, 
-                    'error' => 'User bank was not found, use the bank list endpoint to get banks that we support'
-                ], 400);
-            } 
+            $recipient_bank_code = Flutterwave::findBankCode($request->bank);
 
-            $recipient_bank_code = Flutterwave::findBankCode($request->recipient_bank);
             if (!$recipient_bank_code) {
                 return response()->json([
                     'status' =>  false, 
-                    'error' => 'Recipient bank was not found, use the bank list endpoint to get banks that we support'
+                    'error' => 'Recipient bank was not found, use the bank list of supported banks',
+                    'data' => null
                 ], 400);
 
             } 
 
-            // Check Validity of both accounts 
-            $userAccValid = Flutterwave::verifyAccountDetails($user_bank_code['code'], $request->user_acc_num);
+            $recipientAccValid = Flutterwave::verifyAccountDetails($recipient_bank_code['code'], $request->account_number);
 
-            if (!$userAccValid['status']) {
+            if ($recipientAccValid['status'] === 'error') {
                 return response()->json([
-                    'message' => 'User\'s account details are invalid',
-                    'error' => $userAccValid['message']
-                ], 400);
-            }
-
-            $recipientAccValid = Flutterwave::verifyAccountDetails($recipient_bank_code['code'], $request->recipient_acc_num);
-            if (!$recipientAccValid['status']) {
-                return response()->json([
-                    'message' => 'Recipeint\'s account details are invalid',
-                    'error' => $recipientAccValid['message']
+                    'status' => false,
+                    'error' => $recipientAccValid['message'],
+                    'data' => null
                 ], 400);
             }
 
             $reference = 'BT-' . Carbon::now()->timestamp . '_NT';
 
-            $payment = Flutterwave::chargeBankAcc($reference, $request->amount, $user_bank_code['code'], $request->user_acc_num, Auth::user()->name, Auth::user()->email);
+            $transfer = Flutterwave::initiateTransfer($request->description, $request->amount, $recipient_bank_code['code'], $request->account_number, $reference);
 
-            // if payment fails return alert user 
-            if(!$payment){
+            if ($transfer['status'] !== 'success') {
                 return response()->json([
                     'status' =>  false,
-                    'error' => 'We are unable to process your request at the moment please try again later'
-                ], 500);
-            }
-
-            if ($payment['status'] !== 'success') {
-
-                return response()->json([
-                    'status' =>  false,
-                    'error' => $payment['message']
+                    'error' => $transfer['message'],
+                    'data' => null
                 ], 400);
             }
 
-            $transfer = TransferService::createTransfer(Auth::user()->id, 
-                        $request->user_acc_num, 
-                        $request->user_bank, 
+            $save_transfer = TransferService::createTransfer(Auth::user()->id, 
                         $recipientAccValid['data']['account_name'], 
-                        $request->recipient_bank, 
-                        $request->recipient_acc_num,
-                        $request->amount, $payment['data']['flw_ref']);
+                        $request->bank, 
+                        $request->account_number,
+                        $request->amount, $reference, 
+                        $request->description);
 
             $details = [
                 'user' => Auth::user(),
-                'info' => 'Your transfer to ' . $transfer->recipient_name . ' will be initiated once your payment of ' . $transfer->amount . ' Naira is verified'
+                'info' => 'Your transfer to ' . $save_transfer->recipient_name . ' has been initiated, you will recieve a mail on completion '
             ];
 
             Mail::to(Auth::user()->email)->send(new NotificationMails($details));
 
             return response()->json([
                 'status' =>  true,
-                'message' => 'Payment successful you will recieve a mail when confirmed and transfer is initiated, keep this reference (' . $payment['data']['flw_ref'] . ') as proof if payment is not recieved',
+                'message' => $transfer['message'],
+                'data' => $save_transfer,
             ], 200);
 
     }
-    
-    /*  Required if running flutterwave from a live account 
-    public function validatePayment(Request $request)
-    {
-
-        try {
-            $validated = Flutterwave::validateCharge($request->type, $request->reference, $request->otp);
-
-            if ($validated['status'] !== 'error') {
-                return response()->json([
-                    'status' => true,
-                    'message' => $validated['message'],
-                    'data' => $validated['data']
-
-                ], 200);
-            }
-
-            return response()->json([
-                'status' => false,
-                'message' => $validated['message'],
-            ], 400);
-
-        } catch (\Throwable $err) {
-            return response()->json([
-                'status' => false,
-                'message' => 'We are unable to process your request right now, kindly check your internet connection and try again in a few seconds',
-                'error' => $err->getMessage()
-
-            ], 500);
-        }
-    }*/
 
     public function transferHistory(Request $request)
     {

@@ -24,11 +24,9 @@ class CreateTransfer extends FormRequest
     public function rules()
     {
         return [
-            'user_bank' => ['required'],
-            'user_acc_num' => ['required'],
-            'recipient_acc_num' => ['required'],
-            'recipient_bank' => ['required'],
-            'amount' => ['required']
+            'account_number' => 'required',
+            'bank' => 'required',
+            'amount' => 'required'
         ];
     }
 
@@ -40,10 +38,9 @@ class CreateTransfer extends FormRequest
     public function messages()
     {
         return [
-            'user_bank.required' => 'User bank name field is required',
-            'user_acc_num.required' => 'User account number field is required',
-            'recipient_acc_num.required' => 'Recipient account number field is required',
-            'recipient_bank.required' => 'Recipient bank name field is required',
+           
+            'account_number.required' => 'Recipient account number field is required',
+            'bank.required' => 'Recipient bank name field is required',
             'amount.required' => 'Amount field is required'
         ];
     }

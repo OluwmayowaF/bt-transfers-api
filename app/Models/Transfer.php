@@ -11,14 +11,12 @@ class Transfer extends Model
 
     protected $fillable =[
         'user_id',
-        'sender_acc_num',
-        'sender_bank',
         'recipient_name',
         'recipient_acc_num',
         'recipient_bank',
         'amount',
         'transfer_reference',
-        'payment_reference',
-        'status'
+        'status',
+        'description'
     ];
 }

@@ -31,3 +31,10 @@ Route::prefix('/webhook')->group(function(){
     Route::post('/payments', [WebhookController::class, 'managePayments']);
     Route::post('/transfers', [WebhookController::class, 'manageTransfers']);
 });
+
+Route::get('/', function () {
+    return response()->json([
+        'status' => true,
+        'message' => 'Welcome to BT transfers API V1'
+    ], 200);
+});

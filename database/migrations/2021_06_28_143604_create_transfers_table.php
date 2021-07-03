@@ -16,14 +16,12 @@ class CreateTransfersTable extends Migration
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->string('sender_acc_num');
-            $table->string('sender_bank');
             $table->string('amount');
             $table->string('recipient_name');
             $table->string('recipient_acc_num');
             $table->string('recipient_bank');
+            $table->string('description')->nullable();
             $table->string('transfer_reference')->nullable();
-            $table->string('payment_reference')->nullable();
             $table->string('status')->default('queued');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

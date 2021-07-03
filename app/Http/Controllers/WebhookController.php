@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Mail;
 class WebhookController extends Controller
 {
     /*The Method manages request gotten from the flutterwave payment/ tramsaction webhook*/
-    public function managePayments(Request $request){
+    /*public function managePayments(Request $request){
 
         if($request->event == "charge.completed" && $request->data['status'] == 'successful' ){
 
@@ -58,7 +58,7 @@ class WebhookController extends Controller
         }
 
 
-    }
+    }*/
     
     /*The Method manages request gotten from the flutterwave transfer webhook*/
 
@@ -74,13 +74,13 @@ class WebhookController extends Controller
 
             $details = [
              'user' =>  $sender,
-             'info' => 'Your transfer to '.$transfer->recipient_name.' has now been completed with status => '.$request->data['status'].'! Thanks for your business'
+             'info' => 'Your transfer to '.$transfer->recipient_name.' has now been completed with status '.$request->data['status'].'! Thanks for your business'
          ];
 
          Mail::to($sender->email)->send(new NotificationMails($details));
 
             return response()->json([
-                'status' =>  false,
+                'status' =>  true,
                 ], 200);
 
 
