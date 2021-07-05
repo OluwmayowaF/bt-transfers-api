@@ -21,10 +21,12 @@ class Flutterwave
             'Authorization' => $bearer_token,
         ])->get('https://api.flutterwave.com/v3/banks/NG');
 
-        if($response){
-            return $response->json();
+        if($response['status'] !== 'success'){
+           return ['status' => false, 'message' => 'We are presently unable to process your request' ];
         }
-        return null;
+
+        return ['status' => true, 'data' => $response->json() ];
+       
        
     }
 
@@ -34,14 +36,20 @@ class Flutterwave
 
     public static function findBankCode($bank_name)
     {
-        $banks = self::listBanks()['data'];
-
-        foreach($banks as $bank) {
-            if(preg_match('/'.$bank_name.'/i', $bank['name'] )) {
-                return $bank;
+     
+            $banks = self::listBanks();
+           
+        if ($banks['status']){
+            foreach($banks['data']['data'] as $bank) {
+                if(preg_match('/'.$bank_name.'/i', $bank['name'] )) {
+                    return $bank;
+                }
+    
             }
-
+        }else {
+            return ['status'=>false, 'message' =>  $banks['message']];
         }
+        
     }
 
 

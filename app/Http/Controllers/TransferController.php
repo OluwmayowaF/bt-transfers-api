@@ -21,8 +21,15 @@ class TransferController extends Controller
 
             // Get and verify the validitity of  bank code from the submitted bank name
             $recipient_bank_code = Flutterwave::findBankCode($request->bank);
+            if(!$recipient_bank_code['status']){
+                // Flutter wave API is unavailable no point proceeding
+                return response()->json([
+                    'status' =>  false,
+                    'message' => 'We are presently unable to processs your request, please try again later'
+                ], 500);
+            }
 
-            if (!$recipient_bank_code) {
+            if (!$recipient_bank_code['data']) {
                 return response()->json([
                     'status' =>  false, 
                     'error' => 'Recipient bank was not found, use the bank list of supported banks',
@@ -30,6 +37,10 @@ class TransferController extends Controller
                 ], 400);
 
             } 
+
+                 
+
+            $recipient_bank_code = $recipient_bank_code['data'];
 
             $recipientAccValid = Flutterwave::verifyAccountDetails($recipient_bank_code['code'], $request->account_number);
 

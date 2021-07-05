@@ -24,8 +24,8 @@ class CreateTransfer extends FormRequest
     public function rules()
     {
         return [
-            'account_number' => 'required',
-            'bank' => 'required',
+            'account_number' => 'required|min:10',
+            'bank' => 'required|string|min:3',
             'amount' => 'required'
         ];
     }
