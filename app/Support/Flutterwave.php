@@ -3,7 +3,7 @@
 namespace App\Support;
 
 use Illuminate\Support\Facades\Http;
-
+use Illuminate\Support\Facades\Log;
 
 /**
  * Manage All interactions with the Flutterwave API in this script
@@ -22,6 +22,7 @@ class Flutterwave
         ])->get('https://api.flutterwave.com/v3/banks/NG');
 
         if($response['status'] !== 'success'){
+            Log::error('flutterwave error: '.$response['message']);
            return ['status' => false, 'message' => 'We are presently unable to process your request' ];
         }
 
